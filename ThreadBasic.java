@@ -1,3 +1,6 @@
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 class helloWorldPrinter extends Thread{
     @Override
     public void run(){
@@ -65,7 +68,18 @@ public class ThreadBasic{
         //     singleNumberPrinter.start();
         // }
 
-        Thread th = new Thread(new Student(0));
-        th.start();
+        // Thread th = new Thread(new Student(0));
+        // th.start();
+
+        // for(int j=1; j<=100; j++){
+        //     Thread temp = new Thread(new Student(j));
+        //     temp.start();
+        // }
+
+        // Executor Service java
+        ExecutorService es = Executors.newFixedThreadPool(10);
+        for (int j=1; j<=100; j++){
+            es.submit(new Student(j));
+        }
     }
 }
