@@ -18,7 +18,7 @@ class ListSorter implements Callable<ArrayList<Integer>>{
         ArrayList<Integer> left = createSubList(listToSort, 0, mid);
         ArrayList<Integer> right = createSubList(listToSort, mid, listToSort.size());
         // Executor service to sort two halves in parallel
-        ExecutorService es = Executors.newFixedThreadPool(5);
+        ExecutorService es = Executors.newFixedThreadPool(2);
         ListSorter leftSorter = new ListSorter(left);
         ListSorter righSorter = new ListSorter(right);
         Future<ArrayList<Integer>> leftSortedFuture =  es.submit(leftSorter);
@@ -64,7 +64,7 @@ class ListSorter implements Callable<ArrayList<Integer>>{
         return sortedList;
     }
 }
-public class MergeSort {
+public class newFixedThreadPoolMergeSort {
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         ArrayList<Integer> listToSort = new ArrayList<>();
         int[] temp = {9, -1, 0, 4, 7, -3, 8, 3, 12, 3, 9, 8, -10};
