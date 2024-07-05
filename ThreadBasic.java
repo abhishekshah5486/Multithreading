@@ -1,5 +1,10 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 class helloWorldPrinter extends Thread{
     @Override
@@ -45,8 +50,43 @@ class Student implements Runnable{
         System.out.println(this.num + " " + Thread.currentThread().getName());
     }
 }
+class DoubleList implements Runnable{
+    public List<Integer> arr;
+    public DoubleList(List<Integer> arr){
+        this.arr = arr;
+    }
+    public List<Integer> returnDoubledList(List<Integer> arr){
+        return arr;
+    }
+    @Override
+    public void run(){
+        List<Integer> ans = new ArrayList<>();
+        for (int j=0; j<this.arr.size(); j++){
+            ans.add(this.arr.get(j) * 2);
+        }
+        returnDoubledList(ans);
+    }
+}
+
+// Callable Interface to be used to return something by a thread
+class ListDoubler implements Callable<ArrayList<Integer>>{
+    public ArrayList<Integer> lst;
+
+    public ListDoubler(ArrayList<Integer> lst){
+        this.lst = lst;
+    }
+    @Override
+    public ArrayList<Integer> call(){
+        ArrayList<Integer> ans = new ArrayList<>();
+        for (int j=0; j<this.lst.size(); j++){
+            ans.add(this.lst.get(j) * 2);
+        }
+        return ans;
+    }
+    
+}
 public class ThreadBasic{
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException, ExecutionException {
         // System.out.println(Thread.currentThread().getName());
         // helloWorldPrinter thread1 = new helloWorldPrinter();
         // thread1.start();
@@ -77,9 +117,18 @@ public class ThreadBasic{
         // }
 
         // Executor Service java
+        // ExecutorService es = Executors.newFixedThreadPool(10);
+        // for (int j=1; j<=100; j++){
+        //     es.submit(new Student(j));
+        // }
+
         ExecutorService es = Executors.newFixedThreadPool(10);
-        for (int j=1; j<=100; j++){
-            es.submit(new Student(j));
+        ArrayList<Integer> lst = new ArrayList<>();
+        for (int j=0; j<10; j++){
+            lst.add(j);
         }
+        ListDoubler listDoubler = new ListDoubler(lst);
+        Future<ArrayList<Integer>> doubledList = es.submit(listDoubler);
+        System.out.println(doubledList.get());
     }
 }
