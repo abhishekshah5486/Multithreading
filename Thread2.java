@@ -15,32 +15,38 @@ public class Thread2 {
         Future<Void> subtractorFuture = es.submit(subtractor);
         adderFuture.get();
         subtractorFuture.get();
-        System.out.println(val.val);
+        System.out.println(val.getData());
 
-        val.val = 0;
-        Lock lock = new ReentrantLock();
-        AdderWithLock adderWithLock = new AdderWithLock(val, lock);
-        SubtractorWithLock subtractorWithLock = new SubtractorWithLock(val, lock);
-        Future<Void> adderWithLockFuture = es.submit(adderWithLock);
-        Future<Void> subtractorWithLockFuture = es.submit(subtractorWithLock);
-        adderWithLockFuture.get();
-        subtractorWithLockFuture.get();
-        System.out.println(val.val);
+        // val.setData(0);;
+        // Lock lock = new ReentrantLock();
+        // AdderWithLock adderWithLock = new AdderWithLock(val, lock);
+        // SubtractorWithLock subtractorWithLock = new SubtractorWithLock(val, lock);
+        // Future<Void> adderWithLockFuture = es.submit(adderWithLock);
+        // Future<Void> subtractorWithLockFuture = es.submit(subtractorWithLock);
+        // adderWithLockFuture.get();
+        // subtractorWithLockFuture.get();
+        // System.out.println(val.getData());
 
-        val.val = 0;
-        AdderWithSynchronization adderWithSynchronization = new AdderWithSynchronization(val);
-        SubtractorWithSynchronization subtractorWithSynchronization = new SubtractorWithSynchronization(val);
-        Future<Void> adderWithSynchronizationFuture = es.submit(adderWithSynchronization);
-        Future<Void> subtractorWithSynchronizationFuture = es.submit(subtractorWithSynchronization);
-        adderWithSynchronizationFuture.get();
-        subtractorWithSynchronizationFuture.get();
-        System.out.println(val.val);
+        // val.setData(0);
+        // AdderWithSynchronization adderWithSynchronization = new AdderWithSynchronization(val);
+        // SubtractorWithSynchronization subtractorWithSynchronization = new SubtractorWithSynchronization(val);
+        // Future<Void> adderWithSynchronizationFuture = es.submit(adderWithSynchronization);
+        // Future<Void> subtractorWithSynchronizationFuture = es.submit(subtractorWithSynchronization);
+        // adderWithSynchronizationFuture.get();
+        // subtractorWithSynchronizationFuture.get();
+        // System.out.println(val.getData());
         es.shutdown();
     }
 }
 class Value {
-    int val;
+    private int val;
     public Value(int val){
+        this.val = val;
+    }
+    synchronized public int getData(){
+        return val;
+    }
+    synchronized public void setData(int val){
         this.val = val;
     }
 }
@@ -52,7 +58,7 @@ class Adder implements Callable<Void>{
     @Override
     public Void call(){
         for (int j=1; j<=100; j++){
-            this.v1.val += j;
+           this.v1.setData(this.v1.getData() + j);
         }
         return null;
     }
@@ -68,7 +74,7 @@ class AdderWithLock implements Callable<Void>{
     public Void call(){
         for (int j=1; j<=100; j++){
             lock.lock();
-            this.v1.val += j;
+            this.v1.setData(this.v1.getData() + j);
             lock.unlock();
         }
         return null;
@@ -83,7 +89,7 @@ class AdderWithSynchronization implements Callable<Void>{
     public Void call(){
         for (int j=1; j<=100; j++){
             synchronized(v1) {
-                this.v1.val += j;
+                this.v1.setData(this.v1.getData() + j);
             }
         }
         return null;
@@ -97,7 +103,7 @@ class Subtractor implements Callable<Void>{
     @Override
     public Void call(){
         for (int j=1; j<=100; j++){
-            this.v1.val -= j;
+            this.v1.setData(this.v1.getData() - j);
         }
         return null;
     }
@@ -113,7 +119,7 @@ class SubtractorWithLock implements Callable<Void>{
     public Void call(){
         for (int j=1; j<=100; j++){
             lock.lock();
-            this.v1.val -= j;
+            this.v1.setData(this.v1.getData() - j);
             lock.unlock();
         }
         return null;
@@ -128,7 +134,7 @@ class SubtractorWithSynchronization implements Callable<Void>{
     public Void call(){
         for (int j=1; j<=100; j++){
             synchronized(v1) {
-                this.v1.val -= j;
+                this.v1.setData(this.v1.getData() - j);
             }
         }
         return null;
